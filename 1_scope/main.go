@@ -1,9 +1,9 @@
 package main
 
 import (
+	"GolangDemo/1_scope/inner"
 	"fmt"
 	"math/rand"
-	"studentOnboard/1_scope/inner"
 )
 
 func main () {

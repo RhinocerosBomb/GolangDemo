@@ -9,7 +9,7 @@ import (
 )
 
 func main()  {
-	Example3()
+	Example4()
 }
 
 // WaitGroup
@@ -113,4 +113,45 @@ func Example3() {
 	// before the main goroutine completes
 	time.Sleep(3*time.Second)
 	fmt.Println("Completed!")
+}
+
+func Example4() {
+	// Mocking server calls
+	servers := []string{"server1", "server2", "server3"}
+
+	// Call function waits a random amount of time and returns a number
+	call := func(server string) int {
+		randNum := rand.Intn(5)
+		fmt.Println(randNum)
+		time.Sleep(time.Duration(randNum) * time.Second)
+
+		return randNum
+	}
+
+	wg := sync.WaitGroup{}
+
+	wg.Add(len(servers))
+
+	//mu := sync.Mutex{}
+	var list []int
+	for _, server := range servers {
+		go func() {
+			defer wg.Done()
+			response := call(server)
+			//mu.Lock()
+			//defer mu.Unlock()
+			list = append(list, response)
+		}()
+	}
+
+	// inputs 1, 2, 2
+	// process 1 reads [] from list
+	// process 1 writes 1 to [] resulting in [1]
+	// process 2 and 3 reads [1] from the list
+	// process 2 writes 2 to [1] results in [1, 2]
+	// process 3 writes 2 to [1] result in [1, 2]
+	// results in [1, 2]
+
+	wg.Wait()
+	fmt.Println(list)
 }
